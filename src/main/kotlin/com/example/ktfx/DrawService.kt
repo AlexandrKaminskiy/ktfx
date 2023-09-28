@@ -7,6 +7,10 @@ import javafx.scene.image.PixelFormat
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 import java.nio.IntBuffer
+import java.util.concurrent.ForkJoinPool
+
+
+
 
 
 class DrawService(private val context: GraphicsContext, private val width: Int, private val height: Int) {
@@ -24,7 +28,7 @@ class DrawService(private val context: GraphicsContext, private val width: Int, 
 
         val intBuffer = IntBuffer.allocate(width * height)
         val pixels = intBuffer.array()
-        points.forEach {
+        points.parallelStream().forEach {
             val pos = it.y * (width) + it.x
             if (pos > 0 && pos < pixels.size) {
                 pixels[pos] = intColor

@@ -9,7 +9,6 @@ import linear.Matrix4x4
 
 class CustomKeyListener(val controller: HelloController) : EventHandler<KeyEvent> {
     override fun handle(event: KeyEvent?) {
-        println("BABUBA")
 
         val matrix4x4 = when (event?.code?.code) {
             87 -> TranslationUtils.translate(TranslationType.TRANSLATE_X, true)

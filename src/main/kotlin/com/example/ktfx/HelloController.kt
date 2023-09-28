@@ -16,20 +16,27 @@ class HelloController {
     private val yMin = 0.0
     private lateinit var vectorCalculator: VectorCalculator
     private lateinit var drawService: DrawService
+    private val avgFps = mutableListOf<Long>()
 
     @FXML
     fun initialize() {
         drawService = DrawService(canvas.graphicsContext2D, canvas.width.toInt(), canvas.height.toInt())
         canvas.onKeyPressed = CustomKeyListener(this)
         canvas.isFocusTraversable = true
-        vectorCalculator = VectorCalculator(ObjInfoExtractor.extract(), MatrixInitializer(canvas.width, canvas.height, xMin, yMin, angle))
+        vectorCalculator = VectorCalculator(canvas.width, canvas.height, ObjInfoExtractor.extract(), MatrixInitializer(canvas.width, canvas.height, xMin, yMin, angle))
         drawImage(Matrix4x4.DIAGONAL)
     }
 
 
     fun drawImage(transformation: Matrix4x4) {
+        val currentTimeMillis = System.currentTimeMillis()
         val points = vectorCalculator.calculate(transformation)
         drawService.drawImage(points)
+        avgFps.add(1000 / (System.currentTimeMillis() - currentTimeMillis))
+
+        println("Average fps " + avgFps.average())
+
+
     }
 
 }
