@@ -1,5 +1,5 @@
 import de.javagl.obj.Obj
-import graphics.DdaAlgo
+import graphics.ShapesAlgos
 import graphics.Point
 import graphics.PointMatch
 import linear.Matrix4x4
@@ -18,7 +18,7 @@ class VectorCalculator(
     private var vectors4D: MutableList<Vector4D>
     private val faces: MutableList<PointMatch>
     private val matrixInitializer: MatrixInitializer = initializer
-    private val ddaAlgo = DdaAlgo()
+    private val shapesAlgos = ShapesAlgos()
 
     init {
         val translation = Matrix4x4(
@@ -43,9 +43,7 @@ class VectorCalculator(
         faces = mutableListOf()
         for (i in 0 until obj.numFaces) {
             val face = obj.getFace(i)
-            faces.add(PointMatch(face.getVertexIndex(0), face.getVertexIndex(1)))
-            faces.add(PointMatch(face.getVertexIndex(1), face.getVertexIndex(2)))
-            faces.add(PointMatch(face.getVertexIndex(0), face.getVertexIndex(2)))
+            faces.add(PointMatch(face.getVertexIndex(0),face.getVertexIndex(1),face.getVertexIndex(2)))
         }
     }
 
@@ -63,8 +61,8 @@ class VectorCalculator(
         return customThreadPool.submit<List<Point>> {
             faces.parallelStream()
                     .flatMap {
-                        if (validPointCondition(transformedVectors[it.a], transformedVectors[it.b]))
-                            ddaAlgo.process(transformedVectors[it.a], transformedVectors[it.b]).stream()
+                        if (validPointCondition(transformedVectors[it.a], transformedVectors[it.b], transformedVectors[it.c]))
+                            shapesAlgos.triangle(listOf(transformedVectors[it.a], transformedVectors[it.b], transformedVectors[it.c])).stream()
                         else
                             Stream.empty()
                     }.toList()
@@ -72,7 +70,8 @@ class VectorCalculator(
 
     }
 
-    private fun validPointCondition(v: Vector4D, v2: Vector4D) =
+    private fun validPointCondition(v: Vector4D, v2: Vector4D, v3: Vector4D) =
             v.x > 0 && v.y > 0 && v.x < width && v.y < height &&
-                    v2.x > 0 && v2.y > 0 && v2.x < width && v2.y < height
+                    v2.x > 0 && v2.y > 0 && v2.x < width && v2.y < height &&
+                    v3.x > 0 && v3.y > 0 && v3.x < width && v3.y < height
 }

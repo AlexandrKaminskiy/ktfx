@@ -8,8 +8,8 @@ class ViewMatrixProviderImpl(val provider: MatrixProvider) : MatrixProvider {
 
     override fun provide(matrix: Matrix4x4): Matrix4x4 {
         val target = Vector3D(0.0, 0.0, 0.0)
-        val eye = Vector3D(0.0, 5.0, 3.0)
-        val up = Vector3D(0.0, 20.0, 3.0)
+        val eye = Vector3D(0.0, 0.0, 10.0)
+        val up = Vector3D(0.0, 10.0, 10.0)
 
         val ZAxis: Vector3D = (eye - target).normalize()
         val XAxis: Vector3D = (up x ZAxis).normalize()
