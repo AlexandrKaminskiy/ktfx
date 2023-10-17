@@ -28,17 +28,17 @@ class ShapesAlgos {
     fun triangle(vectors: List<Vector4D>): List<Point> {
         val points = arrayListOf<Point>();
         Collections.sort(vectors, Comparator.comparingDouble { v1 -> v1.y })
-        val x1 = vectors[0].x
-        val y1 = vectors[0].y
-        val x2 = vectors[1].x
-        val y2 = vectors[1].y
-        val x3 = vectors[2].x
-        val y3 = vectors[2].y
+        val x1 = vectors[0].x.toInt()
+        val y1 = vectors[0].y.toInt()
+        val x2 = vectors[1].x.toInt()
+        val y2 = vectors[1].y.toInt()
+        val x3 = vectors[2].x.toInt()
+        val y3 = vectors[2].y.toInt()
 
-        for (i in vectors[0].y.toInt() until vectors[1].y.toInt()) {
+        for (i in y1 until y2) {
 
-            var targetX1 = interpolate(i.toDouble(), x1, y1, x3, y3).toInt()
-            var targetX2 = interpolate(i.toDouble(), x1, y1, x2, y2).toInt()
+            var targetX1 = interpolate(i.toDouble(), x1.toDouble(), y1.toDouble(), x3.toDouble(), y3.toDouble()).toInt()
+            var targetX2 = interpolate(i.toDouble(), x1.toDouble(), y1.toDouble(), x2.toDouble(), y2.toDouble()).toInt()
 
             if (targetX1 > targetX2) {
                 targetX1 = targetX2.also { targetX2 = targetX1 }
@@ -49,10 +49,10 @@ class ShapesAlgos {
             }
         }
 
-        for (i in vectors[1].y.toInt() until vectors[2].y.toInt()) {
+        for (i in y2 until y3) {
 
-            var targetX1 = interpolate(i.toDouble(), x1, y1, x3, y3).toInt()
-            var targetX2 = interpolate(i.toDouble(), x2, y2, x3, y3).toInt()
+            var targetX1 = interpolate(i.toDouble(), x1.toDouble(), y1.toDouble(), x3.toDouble(), y3.toDouble()).toInt()
+            var targetX2 = interpolate(i.toDouble(), x2.toDouble(), y2.toDouble(), x3.toDouble(), y3.toDouble()).toInt()
 
             if (targetX1 > targetX2) {
                 targetX1 = targetX2.also { targetX2 = targetX1 }
