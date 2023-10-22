@@ -15,12 +15,12 @@ import java.util.concurrent.ForkJoinPool
 
 class DrawService(private val context: GraphicsContext, private val width: Int, private val height: Int) {
 
-    private val intColor: Int
+//    private val intColor: Int
 
     init {
         val color = Color(0.0, 0.0, 0.0, 1.0)
-        intColor =
-            color.opacity.toInt() * 255 shl 24 or (color.red.toInt() * 255 shl 16) or (color.green.toInt() * 255 shl 8) or color.blue.toInt() * 255
+//        intColor =
+//            color.opacity.toInt() * 255 shl 24 or (color.red.toInt() * 255 shl 16) or (color.green.toInt() * 255 shl 8) or color.blue.toInt() * 255
     }
 
     fun drawImage(points: List<Point>) {
@@ -31,7 +31,7 @@ class DrawService(private val context: GraphicsContext, private val width: Int, 
         points.parallelStream().forEach {
             val pos = it.y * (width) + it.x
             if (pos > 0 && pos < pixels.size) {
-                pixels[pos] = intColor
+                pixels[pos] = getColor(it.c)
             }
         }
 
@@ -45,4 +45,9 @@ class DrawService(private val context: GraphicsContext, private val width: Int, 
     }
 
 
+    private fun getColor(col: Int): Int {
+//        val color = Color(222.0, 41.0, 41.0, 1.0)
+//        println(color)
+        return col shl 24;// or ( shl 16) or (col * 255 shl 8) or col * 255
+    }
 }

@@ -6,34 +6,34 @@ import kotlin.math.abs
 
 class ShapesAlgos {
 
-    fun process(v1: Vector4D, v2: Vector4D): List<Point> {
-        val l = if (abs(v1.x - v2.x) > abs(v1.y - v2.y)) abs(v1.x - v2.x).toInt() else abs(v1.y - v2.y).toInt()
-        val points = mutableListOf<Point>();
+//    fun process(v1: Vector4D, v2: Vector4D): List<Point> {
+//        val l = if (abs(v1.x - v2.x) > abs(v1.y - v2.y)) abs(v1.x - v2.x).toInt() else abs(v1.y - v2.y).toInt()
+//        val points = mutableListOf<Point>();
+//
+//        val deltaX: Double = (v2.x - v1.x) / l
+//        val deltaY: Double = (v2.y - v1.y) / l
+//
+//        var currX = v1.x;
+//        var currY = v1.y;
+//
+//        for (i in 1..l) {
+//            points.add(Point(currX.toInt(), currY.toInt()));
+//            currX += deltaX
+//            currY += deltaY
+//        }
+//
+//        return points;
+//    }
 
-        val deltaX: Double = (v2.x - v1.x) / l
-        val deltaY: Double = (v2.y - v1.y) / l
-
-        var currX = v1.x;
-        var currY = v1.y;
-
-        for (i in 1..l) {
-            points.add(Point(currX.toInt(), currY.toInt()));
-            currX += deltaX
-            currY += deltaY
-        }
-
-        return points;
-    }
-
-    fun triangle(vectors: List<Vector4D>): List<Point> {
+    fun triangle(polygon: Polygon): List<Point> {
         val points = arrayListOf<Point>();
-        Collections.sort(vectors, Comparator.comparingDouble { v1 -> v1.y })
-        val x1 = vectors[0].x.toInt()
-        val y1 = vectors[0].y.toInt()
-        val x2 = vectors[1].x.toInt()
-        val y2 = vectors[1].y.toInt()
-        val x3 = vectors[2].x.toInt()
-        val y3 = vectors[2].y.toInt()
+        Collections.sort(polygon.vectors, Comparator.comparingDouble { v1 -> v1.y })
+        val x1 = polygon.vectors[0].x.toInt()
+        val y1 = polygon.vectors[0].y.toInt()
+        val x2 = polygon.vectors[1].x.toInt()
+        val y2 = polygon.vectors[1].y.toInt()
+        val x3 = polygon.vectors[2].x.toInt()
+        val y3 = polygon.vectors[2].y.toInt()
 
         for (i in y1 until y2) {
 
@@ -45,7 +45,7 @@ class ShapesAlgos {
             }
 
             for (j in targetX1..targetX2) {
-                points.add(Point(j, i));
+                points.add(Point(j, i, polygon.color));
             }
         }
 
@@ -59,7 +59,7 @@ class ShapesAlgos {
             }
 
             for (j in targetX1..targetX2) {
-                points.add(Point(j, i));
+                points.add(Point(j, i, polygon.color));
             }
         }
         return points

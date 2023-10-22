@@ -1,11 +1,13 @@
 import de.javagl.obj.Obj
-import graphics.ShapesAlgos
-import graphics.Point
-import graphics.PointMatch
+import graphics.*
 import linear.Matrix4x4
+import linear.Vector3D
 import linear.Vector4D
+import validator.PolygonValidator
+import validator.impl.PolygonValidatorImpl
 import java.util.concurrent.ForkJoinPool
 import java.util.stream.Stream
+import kotlin.streams.toList
 
 class VectorCalculator(
         val width: Double,
@@ -19,6 +21,9 @@ class VectorCalculator(
     private val faces: MutableList<PointMatch>
     private val matrixInitializer: MatrixInitializer = initializer
     private val shapesAlgos = ShapesAlgos()
+    private val validator: PolygonValidator = PolygonValidatorImpl()
+    private val zBuffer = ZBuffer()
+    private val lighting = Lighting()
 
     init {
         val translation = Matrix4x4(
@@ -43,35 +48,41 @@ class VectorCalculator(
         faces = mutableListOf()
         for (i in 0 until obj.numFaces) {
             val face = obj.getFace(i)
-            faces.add(PointMatch(face.getVertexIndex(0),face.getVertexIndex(1),face.getVertexIndex(2)))
+            faces.add(PointMatch(face.getVertexIndex(0), face.getVertexIndex(1), face.getVertexIndex(2)))
         }
     }
 
     fun calculate(transformation: Matrix4x4): List<Point> {
         vectors4D = vectors4D.map { transformation x it }.toMutableList()
 
-        val transformedVectors = customThreadPool.submit<List<Vector4D>> {
+        val transformedVectors = customThreadPool.submit<List<Vector3D>> {
             vectors4D.parallelStream()
                     .map { it x matrixInitializer.finalMatrix }
                     .map { it * (1 / it.w) }
+                    .map { Vector3D(it.x, it.y, it.z) }
                     .toList()
         }.get()
+//        val toList = faces.parallelStream()
+//                .map { Polygon(arrayListOf(transformedVectors[it.a], transformedVectors[it.b], transformedVectors[it.c]), 0) }
+//                .filter { validator.validateVisibility(it, Vector3D(0.0, 0.0, -10.0)) }
+//                .toList()
 
-
-        return customThreadPool.submit<List<Point>> {
+        val points = customThreadPool.submit<List<Point>> {
             faces.parallelStream()
+                    .map { Polygon(arrayListOf(transformedVectors[it.a], transformedVectors[it.b], transformedVectors[it.c]), 0, 0) }
+                    .filter { validator.validateVisibility(it) }
+                    .filter { validator.validateSizeConstraints(it, width, height) }
+                    .toList().stream()
+                    .peek { it.zBufferValue = zBuffer.getZBufferValue(it, Vector3D(0.0, 0.0, 10.0)) }
+                    .peek { it.color = lighting.lambertCalculation(it, Vector3D(0.0, 10.0, 10.0)) }
+                    .sorted { o1, o2 -> o1.zBufferValue - o2.zBufferValue }
                     .flatMap {
-                        if (validPointCondition(transformedVectors[it.a], transformedVectors[it.b], transformedVectors[it.c]))
-                            shapesAlgos.triangle(listOf(transformedVectors[it.a], transformedVectors[it.b], transformedVectors[it.c])).stream()
-                        else
-                            Stream.empty()
+                        shapesAlgos.triangle(it).stream()
                     }.toList()
         }.get()
 
+//        println(points.size)
+        return points
     }
 
-    private fun validPointCondition(v: Vector4D, v2: Vector4D, v3: Vector4D) =
-            v.x > 0 && v.y > 0 && v.x < width && v.y < height &&
-                    v2.x > 0 && v2.y > 0 && v2.x < width && v2.y < height &&
-                    v3.x > 0 && v3.y > 0 && v3.x < width && v3.y < height
 }

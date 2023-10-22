@@ -52,7 +52,7 @@ class HelloController {
         drawService.drawImage(points)
         avgFps.add(1000 / (System.currentTimeMillis() - currentTimeMillis))
 
-        println(1000 / (System.currentTimeMillis() - currentTimeMillis))
+//        println(1000 / (System.currentTimeMillis() - currentTimeMillis))
 
     }
 
