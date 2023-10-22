@@ -5,11 +5,12 @@ import provider.MatrixProvider
 import kotlin.math.tan
 
 class ProjectionMatrixProviderImpl(
+    val provider: MatrixProvider,
     val width: Double,
     val height: Double,
     val angle: Int
 ) : MatrixProvider {
-    override fun provide(): Matrix4x4 {
+    override fun provide(matrix: Matrix4x4): Matrix4x4 {
         val fov = angle / 180.0 * Math.PI;
         val aspect = width / height
         val zNear = 10.0
@@ -24,6 +25,6 @@ class ProjectionMatrixProviderImpl(
             )
         )
 
-        return projection;
+        return provider.provide(matrix x projection)
     }
 }

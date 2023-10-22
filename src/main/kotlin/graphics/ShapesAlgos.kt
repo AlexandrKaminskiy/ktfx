@@ -25,16 +25,15 @@ class ShapesAlgos {
         return points;
     }
 
-    fun triangle(polygon: Polygon): List<Point> {
+    fun triangle(vectors: List<Vector4D>): List<Point> {
         val points = arrayListOf<Point>();
-        polygon.vectors = polygon.vectors.sortedWith(Comparator.comparingDouble { v1 -> v1.y })
-//        Collections.sort(polygon.vectors, Comparator.comparingDouble { v1 -> v1.y })
-        val x1 = polygon.vectors[0].x.toInt()
-        val y1 = polygon.vectors[0].y.toInt()
-        val x2 = polygon.vectors[1].x.toInt()
-        val y2 = polygon.vectors[1].y.toInt()
-        val x3 = polygon.vectors[2].x.toInt()
-        val y3 = polygon.vectors[2].y.toInt()
+        Collections.sort(vectors, Comparator.comparingDouble { v1 -> v1.y })
+        val x1 = vectors[0].x.toInt()
+        val y1 = vectors[0].y.toInt()
+        val x2 = vectors[1].x.toInt()
+        val y2 = vectors[1].y.toInt()
+        val x3 = vectors[2].x.toInt()
+        val y3 = vectors[2].y.toInt()
 
         for (i in y1 until y2) {
 

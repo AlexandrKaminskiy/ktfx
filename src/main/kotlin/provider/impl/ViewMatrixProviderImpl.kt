@@ -4,9 +4,9 @@ import linear.Matrix4x4
 import linear.Vector3D
 import provider.MatrixProvider
 
-class ViewMatrixProviderImpl() : MatrixProvider {
+class ViewMatrixProviderImpl(val provider: MatrixProvider) : MatrixProvider {
 
-    override fun provide(): Matrix4x4 {
+    override fun provide(matrix: Matrix4x4): Matrix4x4 {
         val target = Vector3D(0.0, 0.0, 0.0)
         val eye = Vector3D(0.0, 0.0, 10.0)
         val up = Vector3D(0.0, 10.0, 10.0)
@@ -23,8 +23,7 @@ class ViewMatrixProviderImpl() : MatrixProvider {
                 doubleArrayOf(-(XAxis * eye), -(YAxis * eye), -(ZAxis * eye), 1.0),
             )
         )
-
-        return viewMatrix;
+        return provider.provide(matrix x viewMatrix)
     }
 
 }
