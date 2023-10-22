@@ -7,10 +7,6 @@ import javafx.scene.image.PixelFormat
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 import java.nio.IntBuffer
-import java.util.concurrent.ForkJoinPool
-
-
-
 
 
 class DrawService(private val context: GraphicsContext, private val width: Int, private val height: Int) {
@@ -48,6 +44,6 @@ class DrawService(private val context: GraphicsContext, private val width: Int, 
     private fun getColor(col: Int): Int {
 //        val color = Color(222.0, 41.0, 41.0, 1.0)
 //        println(color)
-        return col shl 24;// or ( shl 16) or (col * 255 shl 8) or col * 255
+        return (col.toDouble() / 90.0 * 255).toInt() shl 24;// or ( shl 16) or (col * 255 shl 8) or col * 255
     }
 }

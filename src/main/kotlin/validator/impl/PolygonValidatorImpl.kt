@@ -1,7 +1,7 @@
 package validator.impl
 
 import graphics.Polygon
-import linear.Vector3D
+import linear.Vector4D
 import validator.PolygonValidator
 
 class PolygonValidatorImpl : PolygonValidator {
@@ -17,14 +17,14 @@ class PolygonValidatorImpl : PolygonValidator {
     }
 
     override fun validateVisibility(polygon: Polygon) : Boolean {
-        return !isClockwise(polygon.vectors)
+        return isClockwise(polygon.vectors)
     }
 
-    private fun isClockwise(vertices: List<Vector3D>): Boolean {
+    private fun isClockwise(vertices: List<Vector4D>): Boolean {
         var sum = 0.0
         for (i in vertices.indices) {
-            val current: Vector3D = vertices[i]
-            val next: Vector3D = vertices[(i + 1) % vertices.size]
+            val current: Vector4D = vertices[i]
+            val next: Vector4D = vertices[(i + 1) % vertices.size]
             sum += (next.x - current.x) * (next.y + current.y)
         }
         return sum < 0

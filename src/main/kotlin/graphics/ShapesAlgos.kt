@@ -2,6 +2,7 @@ package graphics
 
 import linear.Vector4D
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.abs
 
 class ShapesAlgos {
@@ -26,14 +27,15 @@ class ShapesAlgos {
 //    }
 
     fun triangle(polygon: Polygon): List<Point> {
-        val points = arrayListOf<Point>();
-        Collections.sort(polygon.vectors, Comparator.comparingDouble { v1 -> v1.y })
-        val x1 = polygon.vectors[0].x.toInt()
-        val y1 = polygon.vectors[0].y.toInt()
-        val x2 = polygon.vectors[1].x.toInt()
-        val y2 = polygon.vectors[1].y.toInt()
-        val x3 = polygon.vectors[2].x.toInt()
-        val y3 = polygon.vectors[2].y.toInt()
+        val points = arrayListOf<Point>()
+        val polygonVectors = ArrayList(polygon.vectors)
+        Collections.sort(polygonVectors, Comparator.comparingDouble { v1 -> v1.y })
+        val x1 = polygonVectors[0].x.toInt()
+        val y1 = polygonVectors[0].y.toInt()
+        val x2 = polygonVectors[1].x.toInt()
+        val y2 = polygonVectors[1].y.toInt()
+        val x3 = polygonVectors[2].x.toInt()
+        val y3 = polygonVectors[2].y.toInt()
 
         for (i in y1 until y2) {
 
@@ -45,7 +47,7 @@ class ShapesAlgos {
             }
 
             for (j in targetX1..targetX2) {
-                points.add(Point(j, i, polygon.color));
+                points.add(Point(j, i, polygon.zBufferValue, polygon.color));
             }
         }
 
@@ -59,7 +61,7 @@ class ShapesAlgos {
             }
 
             for (j in targetX1..targetX2) {
-                points.add(Point(j, i, polygon.color));
+                points.add(Point(j, i, polygon.zBufferValue, polygon.color));
             }
         }
         return points
