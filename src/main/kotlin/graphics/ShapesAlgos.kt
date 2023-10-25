@@ -32,22 +32,28 @@ class ShapesAlgos {
         Collections.sort(polygonVectors, Comparator.comparingDouble { v1 -> v1.y })
         val x1 = polygonVectors[0].x.toInt()
         val y1 = polygonVectors[0].y.toInt()
+        val z1 = polygonVectors[0].z.toInt()
         val x2 = polygonVectors[1].x.toInt()
         val y2 = polygonVectors[1].y.toInt()
+        val z2 = polygonVectors[1].z.toInt()
         val x3 = polygonVectors[2].x.toInt()
         val y3 = polygonVectors[2].y.toInt()
+        val z3 = polygonVectors[2].z.toInt()
 
         for (i in y1 until y2) {
 
             var targetX1 = interpolate(i.toDouble(), x1.toDouble(), y1.toDouble(), x3.toDouble(), y3.toDouble()).toInt()
             var targetX2 = interpolate(i.toDouble(), x1.toDouble(), y1.toDouble(), x2.toDouble(), y2.toDouble()).toInt()
+            var targetZ1 = interpolate(i.toDouble(), z1.toDouble(), y1.toDouble(), z3.toDouble(), y3.toDouble())
+            var targetZ2 = interpolate(i.toDouble(), z1.toDouble(), y1.toDouble(), z2.toDouble(), y3.toDouble())
 
             if (targetX1 > targetX2) {
                 targetX1 = targetX2.also { targetX2 = targetX1 }
             }
 
             for (j in targetX1..targetX2) {
-                points.add(Point(j, i, polygon.zBufferValue, polygon.color));
+                val zVal = interpolate(j.toDouble(), targetZ1, targetX1.toDouble(), targetZ2, targetX2.toDouble())
+                points.add(Point(j, i, zVal, polygon.color))
             }
         }
 
@@ -55,13 +61,16 @@ class ShapesAlgos {
 
             var targetX1 = interpolate(i.toDouble(), x1.toDouble(), y1.toDouble(), x3.toDouble(), y3.toDouble()).toInt()
             var targetX2 = interpolate(i.toDouble(), x2.toDouble(), y2.toDouble(), x3.toDouble(), y3.toDouble()).toInt()
+            var targetZ1 = interpolate(i.toDouble(), z1.toDouble(), y1.toDouble(), z3.toDouble(), y3.toDouble())
+            var targetZ2 = interpolate(i.toDouble(), z2.toDouble(), y2.toDouble(), z3.toDouble(), y3.toDouble())
 
             if (targetX1 > targetX2) {
                 targetX1 = targetX2.also { targetX2 = targetX1 }
             }
 
             for (j in targetX1..targetX2) {
-                points.add(Point(j, i, polygon.zBufferValue, polygon.color));
+                val zVal = interpolate(j.toDouble(), targetZ1, targetX1.toDouble(), targetZ2, targetX2.toDouble())
+                points.add(Point(j, i, zVal, polygon.color));
             }
         }
         return points

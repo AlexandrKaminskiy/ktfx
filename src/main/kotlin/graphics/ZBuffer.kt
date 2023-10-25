@@ -6,10 +6,10 @@ import java.util.Collections
 import java.util.Comparator
 
 class ZBuffer {
-    fun getZBufferValue(polygon: Polygon, eye: Vector3D): Double {
+    fun getZBufferValue(point: Point, eye: Vector3D): Double {
 
-        val surfaceVector = getCenter(polygon)//Vector3D(polygon.vectors[0].x, polygon.vectors[0].y, polygon.vectors[0].z)
-        val v = eye - surfaceVector
+        val vertex = Vector3D(point.x.toDouble(), point.y.toDouble(), point.z)
+        val v = eye - vertex
 
         return v.norm()
     }
@@ -40,10 +40,10 @@ class ZBuffer {
 
 }
 
-fun main() {
-    println(ZBuffer().getCenter(Polygon(arrayListOf<Vector4D>(
-            Vector4D(0.0, 0.0, -10.0, 0.0),
-            Vector4D(1.0, 0.0, 0.0, 0.0),
-            Vector4D(0.0, -1.0, 15.0, 0.0),
-    ), 0, 0.0)))
-}
+//fun main() {
+//    println(ZBuffer().getCenter(Polygon(arrayListOf<Vector4D>(
+//            Vector4D(0.0, 0.0, -10.0, 0.0),
+//            Vector4D(1.0, 0.0, 0.0, 0.0),
+//            Vector4D(0.0, -1.0, 15.0, 0.0),
+//    ), 0, 0.0)))
+//}

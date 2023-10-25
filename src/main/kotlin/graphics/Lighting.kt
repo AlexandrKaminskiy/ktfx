@@ -17,7 +17,7 @@ class Lighting {
 
         theta = if (theta > 90) 90.0 else theta
 
-        theta = 90 - theta
+//        theta = 90 - theta
 //        println(theta)
         return theta.toInt()
     }

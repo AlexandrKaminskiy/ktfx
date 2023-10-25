@@ -1,6 +1,7 @@
 package validator.impl
 
 import graphics.Polygon
+import linear.Vector3D
 import linear.Vector4D
 import validator.PolygonValidator
 

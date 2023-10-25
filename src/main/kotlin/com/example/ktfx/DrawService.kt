@@ -24,7 +24,7 @@ class DrawService(private val context: GraphicsContext, private val width: Int, 
 
         val intBuffer = IntBuffer.allocate(width * height)
         val pixels = intBuffer.array()
-        points.parallelStream().forEach {
+        points.stream().forEach {
             val pos = it.y * (width) + it.x
             if (pos > 0 && pos < pixels.size) {
                 pixels[pos] = getColor(it.c)
