@@ -1,9 +1,8 @@
 package graphics
 
-import linear.Vector4D
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.abs
+import kotlin.math.floor
 
 class ShapesAlgos {
 
@@ -30,48 +29,63 @@ class ShapesAlgos {
         val points = arrayListOf<Point>()
         val polygonVectors = ArrayList(polygon.vectors)
         Collections.sort(polygonVectors, Comparator.comparingDouble { v1 -> v1.y })
-        val x1 = polygonVectors[0].x.toInt()
-        val y1 = polygonVectors[0].y.toInt()
-        val z1 = polygonVectors[0].z.toInt()
-        val x2 = polygonVectors[1].x.toInt()
-        val y2 = polygonVectors[1].y.toInt()
-        val z2 = polygonVectors[1].z.toInt()
-        val x3 = polygonVectors[2].x.toInt()
-        val y3 = polygonVectors[2].y.toInt()
-        val z3 = polygonVectors[2].z.toInt()
+        val x1 = polygonVectors[0].x
+        val y1 = polygonVectors[0].y
+        val z1 = polygonVectors[0].z
+        val x2 = polygonVectors[1].x
+        val y2 = polygonVectors[1].y
+        val z2 = polygonVectors[1].z
+        val x3 = polygonVectors[2].x
+        val y3 = polygonVectors[2].y
+        val z3 = polygonVectors[2].z
 
-        for (i in y1 until y2) {
+        var currentY = y1
 
-            var targetX1 = interpolate(i.toDouble(), x1.toDouble(), y1.toDouble(), x3.toDouble(), y3.toDouble()).toInt()
-            var targetX2 = interpolate(i.toDouble(), x1.toDouble(), y1.toDouble(), x2.toDouble(), y2.toDouble()).toInt()
-            var targetZ1 = interpolate(i.toDouble(), z1.toDouble(), y1.toDouble(), z3.toDouble(), y3.toDouble())
-            var targetZ2 = interpolate(i.toDouble(), z1.toDouble(), y1.toDouble(), z2.toDouble(), y3.toDouble())
+        while (currentY < y2) {
+
+            var targetX1 = interpolate(currentY, x1, y1, x3, y3)
+            var targetX2 = interpolate(currentY, x1, y1, x2, y2)
+
+            val targetZ1 = interpolate(currentY, z1, y1, z3, y3)
+            val targetZ2 = interpolate(currentY, z1, y1, z2, y3)
 
             if (targetX1 > targetX2) {
                 targetX1 = targetX2.also { targetX2 = targetX1 }
             }
 
-            for (j in targetX1..targetX2) {
-                val zVal = interpolate(j.toDouble(), targetZ1, targetX1.toDouble(), targetZ2, targetX2.toDouble())
-                points.add(Point(j, i, zVal, polygon.color))
+            var currentX = floor(targetX1)
+
+            while (currentX < targetX2) {
+                val zVal = interpolate(currentX, targetZ1, targetX1, targetZ2, targetX2)
+                points.add(Point(currentX.toInt(), currentY.toInt(), zVal, polygon.color))
+                currentX += 1.0
             }
+            currentY += 1.0
         }
 
-        for (i in y2 until y3) {
+        currentY = y2
 
-            var targetX1 = interpolate(i.toDouble(), x1.toDouble(), y1.toDouble(), x3.toDouble(), y3.toDouble()).toInt()
-            var targetX2 = interpolate(i.toDouble(), x2.toDouble(), y2.toDouble(), x3.toDouble(), y3.toDouble()).toInt()
-            var targetZ1 = interpolate(i.toDouble(), z1.toDouble(), y1.toDouble(), z3.toDouble(), y3.toDouble())
-            var targetZ2 = interpolate(i.toDouble(), z2.toDouble(), y2.toDouble(), z3.toDouble(), y3.toDouble())
+        while (currentY < y3) {
+
+            var targetX1 = interpolate(currentY, x1, y1, x3, y3)
+            var targetX2 = interpolate(currentY, x2, y2, x3, y3)
+
+            val targetZ1 = interpolate(currentY, z1, y1, z3, y3)
+            val targetZ2 = interpolate(currentY, z2, y2, z3, y3)
 
             if (targetX1 > targetX2) {
                 targetX1 = targetX2.also { targetX2 = targetX1 }
             }
 
-            for (j in targetX1..targetX2) {
-                val zVal = interpolate(j.toDouble(), targetZ1, targetX1.toDouble(), targetZ2, targetX2.toDouble())
-                points.add(Point(j, i, zVal, polygon.color));
+            var currentX = floor(targetX1)
+
+            while (currentX < targetX2) {
+                val zVal = interpolate(currentX, targetZ1, targetX1, targetZ2, targetX2)
+                points.add(Point(currentX.toInt(), currentY.toInt(), zVal, polygon.color))
+                currentX += 1.0
             }
+
+            currentY += 1.0
         }
         return points
 

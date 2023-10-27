@@ -64,9 +64,8 @@ class VectorCalculator(
         val points: List<Point> = customThreadPool.run {
             faces.parallelStream()
                 .map { Polygon(arrayListOf(vectors4D[it.a], vectors4D[it.b], vectors4D[it.c]), 0) }
-                .peek { it.color = lighting.lambertCalculation(it, Vector3D(10.0, 0.0, 0.0)) }
+                .peek { it.color = lighting.lambertCalculation(it, Vector3D(0.0, 0.0, 10.0)) }
                 .filter { validator.validateVisibility(it) }
-
                 .peek { it.vectors = it.vectors.stream().map { v -> v x viewMatrix.provide() }.toList() }
 //                .peek { it.zBufferValue = zBuffer.getZBufferValue(it, Vector3D(0.0, 0.0, 0.0)) }
                 .peek { it.vectors = it.vectors.stream().map { v -> v x projectionMatrix.provide() }.toList() }
@@ -74,12 +73,11 @@ class VectorCalculator(
                 .peek { it.vectors = it.vectors.stream().map { v -> v * (1 / v.w) }.toList() }
 //                    .peek { println(it.color) }
                 .filter { validator.validateSizeConstraints(it, width, height) }
-
                 .flatMap {
                     shapesAlgos.triangle(it).stream()
                 }
                 .peek { it.z = zBuffer.getZBufferValue(it, Vector3D(0.0, 0.0, 0.0)) }
-                .sorted(Comparator.comparingDouble<Point?> { it.z }.reversed())
+                .sorted(Comparator.comparingDouble { it.z })
                 .toList()
         }
 
