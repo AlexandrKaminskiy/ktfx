@@ -34,6 +34,6 @@ class DrawService(private val context: GraphicsContext, private val width: Int, 
 
     private fun getColor(col: Int): Int {
 
-        return (col.toDouble() * 255).toInt() shl 24
+        return ((180.0 - col.toDouble()) * 255).toInt() shl 24
     }
 }
