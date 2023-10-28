@@ -11,7 +11,20 @@ class ZBuffer {
         val vertex = Vector3D(point.x.toDouble(), point.y.toDouble(), point.z)
         val v = eye - vertex
 
-        return v.norm()
+        return point.z
+    }
+
+    fun getZBufferValue(polygon: Polygon, eye: Vector3D): Double {
+
+        val v1 = eye - Vector3D(polygon.vectors[0].x,polygon.vectors[0].y,polygon.vectors[0].z)
+        val v2 = eye - Vector3D(polygon.vectors[0].x,polygon.vectors[0].y,polygon.vectors[0].z)
+        val v3 = eye - Vector3D(polygon.vectors[0].x,polygon.vectors[0].y,polygon.vectors[0].z)
+
+        val n1 = v1.norm()
+        val n2 = v2.norm()
+        val n3 = v3.norm()
+
+        return (n1 + n2 + n3) / 3.0
     }
 
 

@@ -2,6 +2,7 @@ package graphics
 
 import java.util.*
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.floor
 
 class ShapesAlgos {
@@ -47,19 +48,23 @@ class ShapesAlgos {
             var targetX2 = interpolate(currentY, x1, y1, x2, y2)
 
             val targetZ1 = interpolate(currentY, z1, y1, z3, y3)
-            val targetZ2 = interpolate(currentY, z1, y1, z2, y3)
+            val targetZ2 = interpolate(currentY, z1, y1, z2, y2)
 
             if (targetX1 > targetX2) {
                 targetX1 = targetX2.also { targetX2 = targetX1 }
             }
 
-            var currentX = floor(targetX1)
+            var currentX = targetX1
 
             while (currentX < targetX2) {
                 val zVal = interpolate(currentX, targetZ1, targetX1, targetZ2, targetX2)
-                points.add(Point(currentX.toInt(), currentY.toInt(), zVal, polygon.color))
+                points.add(Point(floor(currentX).toInt(), ceil(currentY).toInt(), polygon.depth, polygon.color))
                 currentX += 1.0
             }
+
+//            val zVal = interpolate(currentX, targetZ1, targetX1, targetZ2, targetX2)
+//            points.add(Point(floor(currentX).toInt(), ceil(currentY).toInt(), zVal, polygon.color))
+
             currentY += 1.0
         }
 
@@ -77,13 +82,17 @@ class ShapesAlgos {
                 targetX1 = targetX2.also { targetX2 = targetX1 }
             }
 
-            var currentX = floor(targetX1)
+            var currentX = targetX1
 
             while (currentX < targetX2) {
+
                 val zVal = interpolate(currentX, targetZ1, targetX1, targetZ2, targetX2)
-                points.add(Point(currentX.toInt(), currentY.toInt(), zVal, polygon.color))
+                points.add(Point(floor(currentX).toInt(), ceil(currentY).toInt(), polygon.depth, polygon.color))
                 currentX += 1.0
             }
+
+//            val zVal = interpolate(currentX, targetZ1, targetX1, targetZ2, targetX2)
+//            points.add(Point(floor(currentX).toInt(), ceil(currentY).toInt(), zVal, polygon.color))
 
             currentY += 1.0
         }

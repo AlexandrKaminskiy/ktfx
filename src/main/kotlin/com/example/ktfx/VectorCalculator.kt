@@ -65,22 +65,26 @@ class VectorCalculator(
             faces.parallelStream()
                 .map { Polygon(arrayListOf(vectors4D[it.a], vectors4D[it.b], vectors4D[it.c]), 0) }
                 .peek { it.color = lighting.lambertCalculation(it, Vector3D(0.0, 0.0, 10.0)) }
-                .filter { validator.validateVisibility(it) }
+//                .filter { validator.validateVisibility(it) }
                 .peek { it.vectors = it.vectors.stream().map { v -> v x viewMatrix.provide() }.toList() }
-//                .peek { it.zBufferValue = zBuffer.getZBufferValue(it, Vector3D(0.0, 0.0, 0.0)) }
+                .peek {it.depth = zBuffer.getZBufferValue(it, Vector3D(0.0, 0.0, 0.0))}
                 .peek { it.vectors = it.vectors.stream().map { v -> v x projectionMatrix.provide() }.toList() }
                 .peek { it.vectors = it.vectors.stream().map { v -> v x viewport.provide() }.toList() }
                 .peek { it.vectors = it.vectors.stream().map { v -> v * (1 / v.w) }.toList() }
-//                    .peek { println(it.color) }
                 .filter { validator.validateSizeConstraints(it, width, height) }
+//                    .findFirst().stream()
+//                    .skip(1)
+//                .peek { println(it.color) }
+
                 .flatMap {
                     shapesAlgos.triangle(it).stream()
                 }
                 .peek { it.z = zBuffer.getZBufferValue(it, Vector3D(0.0, 0.0, 0.0)) }
-                .sorted(Comparator.comparingDouble { it.z })
+                .sorted(Comparator.comparingDouble<Point?> { it.z }.reversed())
                 .toList()
         }
-
+        //-0.3345680313038191 bad p
+        //-0.33456790150450544 norm p
         return points
     }
 
