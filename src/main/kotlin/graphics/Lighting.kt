@@ -11,23 +11,31 @@ class Lighting {
 
         val v1 = Vector3D(p.vectors[0].x, p.vectors[0].y, p.vectors[0].z)
         val v2 = Vector3D(p.vectors[1].x, p.vectors[1].y, p.vectors[1].z)
-        var norm: Vector3D;
-        if (!isClockwise(p.vectors)) {
-            norm = (v1 x v2)
+        val v3 = Vector3D(p.vectors[2].x, p.vectors[2].y, p.vectors[2].z)
+
+        val v1ForNorm = v2 - v1
+        val v2ForNorm = v3 - v1
+
+        val norm: Vector3D = if (!isClockwise(p.vectors)) {
+            (v2ForNorm.normalize() x v1ForNorm.normalize())
         } else {
-            norm = (v2 x v1)
+            (v1ForNorm.normalize() x v2ForNorm.normalize())
         }
 
-        val view = (v1 - eye)
-        var theta = Math.toDegrees(acos(norm * view / (view.norm() * norm.norm())))
+        val thetaV1 = getAngleForVertex(eye, v1, norm)
+        val thetaV2 = getAngleForVertex(eye, v2, norm)
+        val thetaV3 = getAngleForVertex(eye, v3, norm)
 
-        theta = if (theta > 90) 90.0 else theta
-
-//        theta = 90 - theta
-//        println(theta)
-        return theta.toInt()
+        val avgTheta = ((thetaV1 + thetaV2 + thetaV3) / 3.0).toInt()
+//        println(avgTheta)
+        return avgTheta
     }
 
+
+    private fun getAngleForVertex(eye: Vector3D, vertex: Vector3D, norm: Vector3D): Double {
+        val view = (eye - vertex).normalize()
+        return Math.toDegrees(acos(norm * view / (view.norm() * norm.norm())))
+    }
     private fun isClockwise(vertices: List<Vector4D>): Boolean {
         var sum = 0.0
         for (i in vertices.indices) {

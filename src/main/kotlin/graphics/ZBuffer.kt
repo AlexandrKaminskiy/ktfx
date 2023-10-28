@@ -35,7 +35,7 @@ class ZBuffer {
         Collections.sort(vertices, Comparator.comparingDouble { o1 -> o1.z })
         val z = (vertices[2].z + vertices[0].z) / 2
 
-        return Vector3D(x, y, z);
+        return Vector3D(x, y, z)
     }
 
 }
