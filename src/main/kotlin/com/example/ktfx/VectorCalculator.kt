@@ -57,6 +57,7 @@ class VectorCalculator(
             val face = obj.getFace(i)
             faces.add(PointMatch(face.getVertexIndex(0), face.getVertexIndex(1), face.getVertexIndex(2)))
         }
+        PolygonUtils.toPolygons(faces, vectors4D)
     }
 
     fun calculate(transformation: Matrix4x4) {
