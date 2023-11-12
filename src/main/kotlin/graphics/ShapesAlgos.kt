@@ -57,6 +57,7 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
 
                 if (u >= 0 && v >= 0 && w >= 0) {
                     val z = a.z * u + v * b.z + w * c.z
+                    val col = a.z * u + v * b.z + w * c.z
                     zBuffer.setColor(j, i, Point(z, ((180.0 - polygon.color) * 255).toInt() shl 24))
                 }
                 incX++

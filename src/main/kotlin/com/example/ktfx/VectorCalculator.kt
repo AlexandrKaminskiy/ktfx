@@ -11,7 +11,7 @@ import validator.impl.PolygonValidatorImpl
 import java.util.concurrent.ForkJoinPool
 
 class VectorCalculator(
-        private val zBuffer: ZBuffer,
+        zBuffer: ZBuffer,
         private val width: Double,
         private val height: Double,
         angle: Int,
@@ -30,6 +30,7 @@ class VectorCalculator(
     private val viewMatrix = ViewMatrixProviderImpl()
     private val projectionMatrix = ProjectionMatrixProviderImpl(width, height, angle)
     private val viewport = ViewportMatrixProviderImpl(width, height, xMin, yMin)
+    private var light4D = Vector4D(0.0, 10.0, 10.0, 0.0)
 
     init {
         val translation = Matrix4x4(
@@ -61,10 +62,12 @@ class VectorCalculator(
     fun calculate(transformation: Matrix4x4) {
         vectors4D = vectors4D.map { transformation x it }.toMutableList()
 
+        light4D = transformation x light4D
+        val light = Vector3D(light4D.x, light4D.y, light4D.z)
         customThreadPool.run {
             faces.parallelStream()
                     .map { Polygon(arrayListOf(vectors4D[it.a], vectors4D[it.b], vectors4D[it.c]), 0) }
-                    .peek { it.color = lighting.lambertCalculation(it, Vector3D(0.0, 0.0, 10.0)) }
+                    .peek { it.color = lighting.lambertCalculation(it, light) }
                     .filter { validator.validateVisibility(it) }
                     .peek { it.vectors = it.vectors.stream().map { v -> v x viewMatrix.provide() }.toList() }
                     .peek { it.vectors = it.vectors.stream().map { v -> v x projectionMatrix.provide() }.toList() }
