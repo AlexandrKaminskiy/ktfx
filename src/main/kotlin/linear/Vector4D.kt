@@ -13,4 +13,6 @@ data class Vector4D(val x: Double, val y: Double, val z: Double, val w: Double) 
 
         return Vector4D(newX, newY, newZ, newW)
     }
+
+    fun perpDotProduct(v: Vector4D): Double = this.x * v.y - this.y * v.x
 }

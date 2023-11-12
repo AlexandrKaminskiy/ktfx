@@ -20,4 +20,5 @@ data class Vector3D(val x: Double, val y: Double, val z: Double) {
     fun norm() = sqrt(x * x + y * y + z * z)
     fun normalize() = this * (1 / norm())
 
+    fun perpDotProduct(v: Vector3D): Double = this.x * v.y - this.y * v.x
 }
