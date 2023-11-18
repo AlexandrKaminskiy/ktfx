@@ -26,12 +26,11 @@ class VectorCalculator(
     private val faces: MutableList<PointMatch>
     private val shapesAlgos = ShapesAlgos(zBuffer)
     private val validator: PolygonValidator = PolygonValidatorImpl()
-//    private val lighting = Lighting()
 
     private val viewMatrix = ViewMatrixProviderImpl()
     private val projectionMatrix = ProjectionMatrixProviderImpl(width, height, angle)
     private val viewport = ViewportMatrixProviderImpl(width, height, xMin, yMin)
-    private var light4D = Vector4D(0.0, 0.0, 10.0, 0.0)
+    private var light4D = Vector4D(1.0, 1.0, 1.0, 0.0)
 
     init {
         val translation = Matrix4x4(
@@ -72,7 +71,7 @@ class VectorCalculator(
     fun calculate(transformation: Matrix4x4) {
         vectors4D = vectors4D.map { transformation x it }.toMutableList()
 
-//        light4D = transformation x light4D
+        light4D = transformation x light4D
         val light = Vector3D(light4D.x, light4D.y, light4D.z)
         customThreadPool.run {
             faces.parallelStream()

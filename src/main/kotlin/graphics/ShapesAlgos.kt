@@ -9,7 +9,7 @@ import kotlin.math.*
 class ShapesAlgos(val zBuffer: ZBuffer) {
 
     val lighting = Lighting()
-
+    val eye = Vector3D(0.0, 0.0, 10.0)
     fun triangle(polygon: Polygon, light: Vector3D) {
 
         val points = ArrayList(polygon.vectors)
@@ -68,7 +68,12 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
                     val intNorm = (na * u + nb * v + nc * w)
                     val intVec = (aStart * u + bStart * v + cStart * w)
 
-                    val col = lighting.fongCalculation(light - intVec, intNorm)
+                    val calculateLight = lighting.calculateLight(light, intNorm, eye, intVec)
+
+//                    println(calculateLight)
+
+                    val col = 0.0
+
 //                    print("нормаль ")
 //
 //                    print(intNorm)
@@ -78,7 +83,7 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
 //                    print((light - intVec).normalize())
 //                    print(" ")
 //                    println(col)
-                    zBuffer.setColor(j, i, Point(z, (col * 255).toInt() shl 24))
+                    zBuffer.setColor(j, i, Point(z, (calculateLight * 255).toInt() shl 24))
                 }
                 incX++
             }
@@ -86,6 +91,7 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
             incY++
         }
     }
+
 
     fun zeroCheck(v1: Double, v2: Double) = abs(v1 - v2) < 0.00000001
 
@@ -99,8 +105,9 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
 }
 
 fun main() {
-    val a = Vector3D(0.0, 1.0, 0.0)
-    val b = Vector3D(1.0, 0.0, 0.0)
-    println(a.perpDotProduct(b))
+    val l = Vector3D(1.0, -1.0, 0.0)
+    val n = Vector3D(0.0, 1.0, 0.0)
+    val r = l - n * (l * n) * 2.0
+    println(r)
 }
 
