@@ -4,14 +4,13 @@ import ZBuffer
 import linear.Vector3D
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.abs
-import kotlin.math.ceil
-import kotlin.math.floor
+import kotlin.math.*
 
 class ShapesAlgos(val zBuffer: ZBuffer) {
 
+    val lighting = Lighting()
 
-    fun triangle(polygon: Polygon) {
+    fun triangle(polygon: Polygon, light: Vector3D) {
 
         val points = ArrayList(polygon.vectors)
         Collections.sort(points, Comparator.comparingDouble { v1 -> v1.y })
@@ -24,6 +23,14 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
         val a = Vector3D(polygon.vectors[0].x - xMin, polygon.vectors[0].y - yMin, polygon.vectors[0].z)
         val b = Vector3D(polygon.vectors[1].x - xMin, polygon.vectors[1].y - yMin, polygon.vectors[1].z)
         val c = Vector3D(polygon.vectors[2].x - xMin, polygon.vectors[2].y - yMin, polygon.vectors[2].z)
+
+        val aStart = Vector3D(polygon.startVectors[0].x, polygon.startVectors[0].y, polygon.startVectors[0].z)
+        val bStart = Vector3D(polygon.startVectors[1].x, polygon.startVectors[1].y, polygon.startVectors[1].z)
+        val cStart = Vector3D(polygon.startVectors[2].x, polygon.startVectors[2].y, polygon.startVectors[2].z)
+
+        val na = polygon.normals[0]
+        val nb = polygon.normals[1]
+        val nc = polygon.normals[2]
 
         val ab = b - a
         val ac = c - a
@@ -57,8 +64,21 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
 
                 if (u >= 0 && v >= 0 && w >= 0) {
                     val z = a.z * u + v * b.z + w * c.z
-                    val col = a.z * u + v * b.z + w * c.z
-                    zBuffer.setColor(j, i, Point(z, ((180.0 - polygon.color) * 255).toInt() shl 24))
+
+                    val intNorm = (na * u + nb * v + nc * w)
+                    val intVec = (aStart * u + bStart * v + cStart * w)
+
+                    val col = lighting.fongCalculation(light - intVec, intNorm)
+//                    print("нормаль ")
+//
+//                    print(intNorm)
+//                    print(" ")
+//
+//                    print("точка ")
+//                    print((light - intVec).normalize())
+//                    print(" ")
+//                    println(col)
+                    zBuffer.setColor(j, i, Point(z, (col * 255).toInt() shl 24))
                 }
                 incX++
             }

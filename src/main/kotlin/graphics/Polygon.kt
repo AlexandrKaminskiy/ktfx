@@ -1,5 +1,6 @@
 package graphics
 
+import linear.Vector3D
 import linear.Vector4D
-//todo move to vertex
-data class Polygon(var vectors: List<Vector4D>, var color: Int);
+
+data class Polygon(var vectors: List<Vector4D>, var normals: List<Vector3D>, var startVectors: List<Vector4D>, var color: Int);

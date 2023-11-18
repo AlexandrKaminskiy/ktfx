@@ -45,13 +45,13 @@ class HelloController {
     fun drawImage(transformation: Matrix4x4) {
         val currentTimeMillis = System.currentTimeMillis()
         val points = vectorCalculator.calculate(transformation)
-        val polygon1 = Polygon(arrayListOf(
-                Vector4D(100.0, 100.0, 0.0, 0.0),
-
-                Vector4D(50.0, 500.0, 0.0, 0.0),
-                Vector4D(500.0, 50.0, 0.0, 0.0)
-        ), 90
-        )
+//        val polygon1 = Polygon(arrayListOf(
+//                Vector4D(100.0, 100.0, 0.0, 0.0),
+//
+//                Vector4D(50.0, 500.0, 0.0, 0.0),
+//                Vector4D(500.0, 50.0, 0.0, 0.0)
+//        ), 90
+//        )
 //        val polygon2 = Polygon(arrayListOf(
 //                Vector4D(505.3, 150.0, 90.0, 0.0),
 //

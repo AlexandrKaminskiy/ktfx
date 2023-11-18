@@ -8,10 +8,10 @@ object ObjInfoExtractor {
 
     @JvmStatic
     fun extract(): Obj {
-        val inputStream = FileInputStream("Cube.obj")
+        val inputStream = FileInputStream("dragon.obj")
         val obj = ObjUtils.convertToRenderable(
             ObjReader.read(inputStream)
         )
-        return obj;
+        return obj
     }
 }

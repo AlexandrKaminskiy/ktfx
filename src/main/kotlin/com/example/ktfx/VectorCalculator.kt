@@ -22,15 +22,16 @@ class VectorCalculator(
 
     private val customThreadPool = ForkJoinPool(4)
     private var vectors4D: MutableList<Vector4D>
+    private var normals: MutableList<Vector3D>
     private val faces: MutableList<PointMatch>
     private val shapesAlgos = ShapesAlgos(zBuffer)
     private val validator: PolygonValidator = PolygonValidatorImpl()
-    private val lighting = Lighting()
+//    private val lighting = Lighting()
 
     private val viewMatrix = ViewMatrixProviderImpl()
     private val projectionMatrix = ProjectionMatrixProviderImpl(width, height, angle)
     private val viewport = ViewportMatrixProviderImpl(width, height, xMin, yMin)
-    private var light4D = Vector4D(0.0, 10.0, 10.0, 0.0)
+    private var light4D = Vector4D(0.0, 0.0, 10.0, 0.0)
 
     init {
         val translation = Matrix4x4(
@@ -42,7 +43,15 @@ class VectorCalculator(
                 )
         )
         vectors4D = mutableListOf()
+        normals = mutableListOf()
         for (i in 0 until obj.numVertices) {
+            normals.add(
+                    Vector3D(
+                            obj.getNormal(i).x.toDouble(),
+                            obj.getNormal(i).y.toDouble(),
+                            obj.getNormal(i).z.toDouble(),
+                    )
+            )
             vectors4D.add(
                     translation x Vector4D(
                             obj.getVertex(i).x.toDouble(),
@@ -57,27 +66,35 @@ class VectorCalculator(
             val face = obj.getFace(i)
             faces.add(PointMatch(face.getVertexIndex(0), face.getVertexIndex(1), face.getVertexIndex(2)))
         }
-        PolygonUtils.toPolygons(faces, vectors4D)
+//        PolygonUtils.toPolygons(faces, vectors4D)
     }
 
     fun calculate(transformation: Matrix4x4) {
         vectors4D = vectors4D.map { transformation x it }.toMutableList()
 
-        light4D = transformation x light4D
+//        light4D = transformation x light4D
         val light = Vector3D(light4D.x, light4D.y, light4D.z)
         customThreadPool.run {
             faces.parallelStream()
-                    .map { Polygon(arrayListOf(vectors4D[it.a], vectors4D[it.b], vectors4D[it.c]), 0) }
-                    .peek { it.color = lighting.lambertCalculation(it, light) }
-                    .filter { validator.validateVisibility(it) }
+                    .map {
+                        Polygon(
+                                arrayListOf(vectors4D[it.a], vectors4D[it.b], vectors4D[it.c]),
+                                arrayListOf(normals[it.a], normals[it.b], normals[it.c]),
+                                arrayListOf(vectors4D[it.a], vectors4D[it.b], vectors4D[it.c]),
+                                0
+                        )
+                    }
+//                    .peek { it.color d= lighting.lambertCalculation(it, light) }
                     .peek { it.vectors = it.vectors.stream().map { v -> v x viewMatrix.provide() }.toList() }
+//                    .peek { it.startVectors = it.startVectors.stream().map { v -> v x viewMatrix.provide() }.toList() }
+                    .filter { validator.validateVisibility(it) }
                     .peek { it.vectors = it.vectors.stream().map { v -> v x projectionMatrix.provide() }.toList() }
                     .peek { it.vectors = it.vectors.stream().map { v -> v x viewport.provide() }.toList() }
                     .peek { it.vectors = it.vectors.stream().map { v -> v * (1 / v.w) }.toList() }
                     .filter { validator.validateSizeConstraints(it, width, height) }
 
                     .forEach {
-                        shapesAlgos.triangle(it)
+                        shapesAlgos.triangle(it, light)
                     }
         }
 
