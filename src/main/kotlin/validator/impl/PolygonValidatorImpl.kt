@@ -19,7 +19,7 @@ class PolygonValidatorImpl : PolygonValidator {
 
     override fun validateVisibility(polygon: Polygon) : Boolean {
 
-        return isClockwise(polygon.vectors)
+        return !isClockwise(polygon.vectors)
     }
 
     private fun isClockwise(vertices: List<Vector4D>): Boolean {

@@ -35,9 +35,9 @@ class VectorCalculator(
     init {
         val translation = Matrix4x4(
                 arrayOf(
-                        doubleArrayOf(15.0, 0.0, 0.0, 0.0),
-                        doubleArrayOf(0.0, 15.0, 0.0, 0.0),
-                        doubleArrayOf(0.0, 0.0, 15.0, 0.0),
+                        doubleArrayOf(1.0, 0.0, 0.0, 0.0),
+                        doubleArrayOf(0.0, 1.0, 0.0, 0.0),
+                        doubleArrayOf(0.0, 0.0, 1.0, 0.0),
                         doubleArrayOf(0.0, 0.0, 0.0, 1.0)
                 )
         )
@@ -85,10 +85,11 @@ class VectorCalculator(
 //                    .peek { it.color d= lighting.lambertCalculation(it, light) }
                     .peek { it.vectors = it.vectors.stream().map { v -> v x viewMatrix.provide() }.toList() }
 //                    .peek { it.startVectors = it.startVectors.stream().map { v -> v x viewMatrix.provide() }.toList() }
-                    .filter { validator.validateVisibility(it) }
                     .peek { it.vectors = it.vectors.stream().map { v -> v x projectionMatrix.provide() }.toList() }
                     .peek { it.vectors = it.vectors.stream().map { v -> v x viewport.provide() }.toList() }
                     .peek { it.vectors = it.vectors.stream().map { v -> v * (1 / v.w) }.toList() }
+                    .filter { validator.validateVisibility(it) }
+
                     .filter { validator.validateSizeConstraints(it, width, height) }
 
                     .forEach {
