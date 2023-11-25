@@ -68,22 +68,8 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
                     val intNorm = (na * u + nb * v + nc * w)
                     val intVec = (aStart * u + bStart * v + cStart * w)
 
-                    val calculateLight = lighting.calculateLight(light, intNorm, eye, intVec)
-
-//                    println(calculateLight)
-
-                    val col = 0.0
-
-//                    print("нормаль ")
-//
-//                    print(intNorm)
-//                    print(" ")
-//
-//                    print("точка ")
-//                    print((light - intVec).normalize())
-//                    print(" ")
-//                    println(col)
-                    zBuffer.setColor(j, i, Point(z, (calculateLight * 255).toInt() shl 24))
+                    val color = lighting.calculateLight(light, intNorm, eye, intVec)
+                    zBuffer.setColor(j, i, Point(z, color))
                 }
                 incX++
             }

@@ -10,9 +10,9 @@ object PolygonUtils {
     fun toPolygons(faces: List<PointMatch>, vectors4D: List<Vector4D>): List<Polygon> {
 
         val norms: List<Vector3D> = faces.map {
-            val a = vectors4D[it.a].to3D()
-            val b = vectors4D[it.b].to3D()
-            val c = vectors4D[it.c].to3D()
+            val a = Vector3D(vectors4D[it.a])
+            val b = Vector3D(vectors4D[it.b])
+            val c = Vector3D(vectors4D[it.c])
             val ab = b - a
             val ac = c - a
 

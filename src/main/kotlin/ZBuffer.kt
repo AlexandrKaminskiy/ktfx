@@ -13,7 +13,6 @@ class ZBuffer(private val width: Int, val height: Int) {
     }
 
     fun getColorMap(): IntArray {
-        println()
         return frame.map { point -> point.c }.toIntArray()
     }
 

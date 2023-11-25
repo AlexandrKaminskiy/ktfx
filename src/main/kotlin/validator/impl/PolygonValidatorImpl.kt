@@ -18,14 +18,6 @@ class PolygonValidatorImpl : PolygonValidator {
     }
 
     override fun validateVisibility(polygon: Polygon) : Boolean {
-//        val a = Vector3D(polygon.vectors[0].x, polygon.vectors[0].y, polygon.vectors[0].z)
-//        val b = Vector3D(polygon.vectors[1].x, polygon.vectors[1].y, polygon.vectors[1].z)
-//        val c = Vector3D(polygon.vectors[2].x, polygon.vectors[2].y, polygon.vectors[2].z)
-//
-//        val ab = b - a
-//        val ac = c - a
-//
-//        return ac.perpDotProduct(ab) < 0
 
         return isClockwise(polygon.vectors)
     }

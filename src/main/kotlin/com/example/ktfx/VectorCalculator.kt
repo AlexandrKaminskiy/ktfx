@@ -30,14 +30,14 @@ class VectorCalculator(
     private val viewMatrix = ViewMatrixProviderImpl()
     private val projectionMatrix = ProjectionMatrixProviderImpl(width, height, angle)
     private val viewport = ViewportMatrixProviderImpl(width, height, xMin, yMin)
-    private var light4D = Vector4D(1.0, 1.0, 1.0, 0.0)
+    private var light4D = Vector4D(0.0, 0.0, -10.0, 0.0)
 
     init {
         val translation = Matrix4x4(
                 arrayOf(
-                        doubleArrayOf(1.0, 0.0, 0.0, 0.0),
-                        doubleArrayOf(0.0, 1.0, 0.0, 0.0),
-                        doubleArrayOf(0.0, 0.0, 1.0, 0.0),
+                        doubleArrayOf(15.0, 0.0, 0.0, 0.0),
+                        doubleArrayOf(0.0, 15.0, 0.0, 0.0),
+                        doubleArrayOf(0.0, 0.0, 15.0, 0.0),
                         doubleArrayOf(0.0, 0.0, 0.0, 1.0)
                 )
         )
@@ -65,12 +65,11 @@ class VectorCalculator(
             val face = obj.getFace(i)
             faces.add(PointMatch(face.getVertexIndex(0), face.getVertexIndex(1), face.getVertexIndex(2)))
         }
-//        PolygonUtils.toPolygons(faces, vectors4D)
     }
 
     fun calculate(transformation: Matrix4x4) {
         vectors4D = vectors4D.map { transformation x it }.toMutableList()
-
+        normals = normals.map { transformation x Vector4D(it) }.map { Vector3D(it) }.toMutableList()
         light4D = transformation x light4D
         val light = Vector3D(light4D.x, light4D.y, light4D.z)
         customThreadPool.run {
