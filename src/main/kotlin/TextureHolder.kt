@@ -22,7 +22,7 @@ class TextureHolder {
         if (abs(u - 1.0) < 0.00001) decX = 1
         var decY = 0
         if (abs(v) < 0.00001) decY = 1
-        val rgb = normalTextures.getRGB((width * u).toInt() - decX, height - (height * v).toInt() - decY)
+        val rgb = albedoTextures.getRGB((width * u).toInt() - decX, height - (height * v).toInt() - decY)
         return Color(rgb)
     }
 

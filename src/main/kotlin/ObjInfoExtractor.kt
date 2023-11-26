@@ -25,7 +25,8 @@ object ObjInfoExtractor {
 
     @JvmStatic
     fun extractNormals(): BufferedImage {
-        return ImageIO.read(File("Car/Normal Map.png"))
+        return ImageIO.read(File("Head/Normal Map.png"))
     }
+
 
 }
