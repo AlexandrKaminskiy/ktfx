@@ -1,16 +1,13 @@
 package com.example.ktfx
 
 import ObjInfoExtractor
+import TextureHolder
 import VectorCalculator
 import ZBuffer
 import com.example.ktfx.listener.CustomKeyListener
-import graphics.Polygon
-import graphics.ShapesAlgos
 import javafx.fxml.FXML
 import javafx.scene.canvas.Canvas
 import linear.Matrix4x4
-import linear.Vector4D
-import kotlin.streams.toList
 
 class HelloController {
 
@@ -36,7 +33,7 @@ class HelloController {
                 canvas.width,
                 canvas.height,
                 angle, xMin, yMin,
-                ObjInfoExtractor.extract()
+                ObjInfoExtractor.extractObjFile()
         )
         drawImage(Matrix4x4.DIAGONAL)
     }

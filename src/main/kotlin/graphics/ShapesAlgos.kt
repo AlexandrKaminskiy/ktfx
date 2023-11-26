@@ -1,7 +1,10 @@
 package graphics
 
+import TextureHolder
 import ZBuffer
+import linear.Matrix4x4
 import linear.Vector3D
+import linear.Vector4D
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.*
@@ -9,8 +12,9 @@ import kotlin.math.*
 class ShapesAlgos(val zBuffer: ZBuffer) {
 
     val lighting = Lighting()
+    private val textureHolder: TextureHolder = TextureHolder()
     val eye = Vector3D(0.0, 0.0, 10.0)
-    fun triangle(polygon: Polygon, light: Vector3D) {
+    fun triangle(polygon: Polygon, light: Vector3D, transformation: Matrix4x4) {
 
         val points = ArrayList(polygon.vectors)
         Collections.sort(points, Comparator.comparingDouble { v1 -> v1.y })
@@ -28,9 +32,9 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
         val bStart = Vector3D(polygon.startVectors[1].x, polygon.startVectors[1].y, polygon.startVectors[1].z)
         val cStart = Vector3D(polygon.startVectors[2].x, polygon.startVectors[2].y, polygon.startVectors[2].z)
 
-        val na = polygon.normals[0]
-        val nb = polygon.normals[1]
-        val nc = polygon.normals[2]
+        val ta = polygon.texes[0]
+        val tb = polygon.texes[1]
+        val tc = polygon.texes[2]
 
         val ab = b - a
         val ac = c - a
@@ -54,9 +58,8 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
         val w00 = 1 - u00 - v00
 
         var incX = 0
-        var incY = 0
 
-        for (i in yMin..yMax) {
+        for ((incY, i) in (yMin..yMax).withIndex()) {
             for (j in xMin..xMax) {
                 val u = u00 + dudx * incX + dudy * incY
                 val v = v00 + dvdx * incX + dvdy * incY
@@ -65,16 +68,22 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
                 if (u >= 0 && v >= 0 && w >= 0) {
                     val z = a.z * u + v * b.z + w * c.z
 
-                    val intNorm = (na * u + nb * v + nc * w)
                     val intVec = (aStart * u + bStart * v + cStart * w)
 
-                    val color = lighting.calculateLight(light, intNorm, eye, intVec)
+                    val intColX = min(ta.x * u + tb.x * v + tc.x * w, 1.0)
+                    val intColY = min(ta.y * u + tb.y * v + tc.y * w, 1.0)
+
+                    val pixel = textureHolder.getPixel(intColX, intColY)
+                    var normal = textureHolder.getNormal(intColX, intColY)
+                    normal = Vector3D(Vector4D(normal) x transformation).normalize()
+
+
+                    val color = lighting.calculateLight(light, normal, eye, intVec, pixel)
                     zBuffer.setColor(j, i, Point(z, color))
                 }
                 incX++
             }
             incX = 0
-            incY++
         }
     }
 

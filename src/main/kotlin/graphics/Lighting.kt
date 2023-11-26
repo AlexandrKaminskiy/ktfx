@@ -6,12 +6,12 @@ import kotlin.math.pow
 
 class Lighting {
 
-    val kAmbient: Double = 0.2
+    val kAmbient: Double = 0.3
     val iColor = Color(60, 0, 10)
 
-    val kDiffuse: Double = 0.8
+    val kDiffuse: Double = 0.7
 
-    val dColor = Color(200, 0, 30)
+    val dColor = Color(127, 61, 61)
 
 
     val kSpecular: Double = 1.0
@@ -19,9 +19,9 @@ class Lighting {
     val sColor = Color(255, 255, 255)
 
 
-    fun calculateLight(light: Vector3D, norm: Vector3D, eye: Vector3D, shape: Vector3D): Int {
-        val ambient = iColor * kAmbient
-        val diffuse = dColor * kDiffuse * (fongCalculation(shape - light, norm))
+    fun calculateLight(light: Vector3D, norm: Vector3D, eye: Vector3D, shape: Vector3D, color: Color): Int {
+        val ambient = color * kAmbient
+        val diffuse = color * kDiffuse * (fongCalculation(shape - light, norm))
         val specular = sColor * kSpecular * theta(light, norm, eye).pow(alpha)
         return (ambient + diffuse + specular).build()
                 .toIntColor()

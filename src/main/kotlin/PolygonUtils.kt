@@ -10,9 +10,9 @@ object PolygonUtils {
     fun toPolygons(faces: List<PointMatch>, vectors4D: List<Vector4D>): List<Polygon> {
 
         val norms: List<Vector3D> = faces.map {
-            val a = Vector3D(vectors4D[it.a])
-            val b = Vector3D(vectors4D[it.b])
-            val c = Vector3D(vectors4D[it.c])
+            val a = Vector3D(vectors4D[it.aV])
+            val b = Vector3D(vectors4D[it.bV])
+            val c = Vector3D(vectors4D[it.cV])
             val ab = b - a
             val ac = c - a
 
@@ -22,7 +22,7 @@ object PolygonUtils {
         val vertexPolygonMap = hashMapOf<Int, ArrayList<Int>>()
         for (i in vectors4D.indices) {
             for (j in faces.indices) {
-                if (faces[j].a == i || faces[j].b == i || faces[j].c == i) {
+                if (faces[j].aV == i || faces[j].bV == i || faces[j].cV == i) {
                     if (vertexPolygonMap[i] == null) {
                         vertexPolygonMap[i] = arrayListOf(i)
                     } else {
