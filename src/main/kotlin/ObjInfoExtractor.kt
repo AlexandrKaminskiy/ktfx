@@ -28,5 +28,9 @@ object ObjInfoExtractor {
         return ImageIO.read(File("Head/Normal Map.png"))
     }
 
+    @JvmStatic
+    fun extractSpecular(): BufferedImage {
+        return ImageIO.read(File("Head/Specular Map.png"))
+    }
 
 }

@@ -77,8 +77,9 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
                     var normal = textureHolder.getNormal(intColX, intColY)
                     normal = Vector3D(Vector4D(normal) x transformation).normalize()
 
+                    val spec = textureHolder.getSpecular(intColX, intColY)
 
-                    val color = lighting.calculateLight(light, normal, eye, intVec, pixel)
+                    val color = lighting.calculateLight(light, normal, eye, intVec, pixel, spec)
                     zBuffer.setColor(j, i, Point(z, color))
                 }
                 incX++
