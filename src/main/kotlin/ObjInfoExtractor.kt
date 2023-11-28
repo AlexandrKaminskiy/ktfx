@@ -11,7 +11,7 @@ object ObjInfoExtractor {
 
     @JvmStatic
     fun extractObjFile(): Obj {
-        val inputStream = FileInputStream("Head/Model.obj")
+        val inputStream = FileInputStream("pekka/source/pekka.obj")
         val obj = ObjUtils.convertToRenderable(
             ObjReader.read(inputStream)
         )
@@ -20,17 +20,17 @@ object ObjInfoExtractor {
 
     @JvmStatic
     fun extractTextures(): BufferedImage {
-        return ImageIO.read(File("Head/Albedo Map.png"))
+        return ImageIO.read(File("pekka/textures/color.png"))
     }
 
     @JvmStatic
     fun extractNormals(): BufferedImage {
-        return ImageIO.read(File("Head/Normal Map.png"))
+        return ImageIO.read(File("pekka/textures/normal.png"))
     }
 
     @JvmStatic
     fun extractSpecular(): BufferedImage {
-        return ImageIO.read(File("Head/Specular Map.png"))
+        return ImageIO.read(File("pekka/textures/metal.png"))
     }
 
 }

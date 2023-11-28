@@ -1,5 +1,9 @@
 import de.javagl.obj.Obj
-import graphics.*
+import graphics.PointMatch
+import graphics.Polygon
+import graphics.ShapesAlgos
+import javafx.scene.media.Media
+import javafx.scene.media.MediaPlayer
 import linear.Matrix4x4
 import linear.Vector2D
 import linear.Vector3D
@@ -9,7 +13,9 @@ import provider.impl.ViewMatrixProviderImpl
 import provider.impl.ViewportMatrixProviderImpl
 import validator.PolygonValidator
 import validator.impl.PolygonValidatorImpl
+import java.io.File
 import java.util.concurrent.ForkJoinPool
+
 
 class VectorCalculator(
         zBuffer: ZBuffer,
@@ -33,6 +39,12 @@ class VectorCalculator(
     private var light4D = Vector4D(0.0, 0.0, -10.0, 0.0)
 
     init {
+//        val musicFile = "saul-goodman-head/saul.mp3"
+//
+//        val sound = Media(File(musicFile).toURI().toString())
+//        val mediaPlayer = MediaPlayer(sound)
+//        mediaPlayer.play()
+
         val translation = Matrix4x4(
                 arrayOf(
                         doubleArrayOf(1.0, 0.0, 0.0, 0.0),
@@ -72,6 +84,16 @@ class VectorCalculator(
                             face.getTexCoordIndex(2)
                     )
             )
+//            faces.add(
+//                    PointMatch(
+//                            face.getVertexIndex(0),
+//                            face.getVertexIndex(2),
+//                            face.getVertexIndex(3),
+//                            face.getTexCoordIndex(0),
+//                            face.getTexCoordIndex(2),
+//                            face.getTexCoordIndex(3)
+//                    )
+//            )
         }
     }
 

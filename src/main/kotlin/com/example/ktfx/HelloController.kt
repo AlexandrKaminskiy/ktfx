@@ -1,7 +1,6 @@
 package com.example.ktfx
 
 import ObjInfoExtractor
-import TextureHolder
 import VectorCalculator
 import ZBuffer
 import com.example.ktfx.listener.CustomKeyListener
