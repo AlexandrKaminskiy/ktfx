@@ -32,7 +32,8 @@ class HelloController {
                 canvas.width,
                 canvas.height,
                 angle, xMin, yMin,
-                ObjInfoExtractor.extractObjFile()
+                ObjInfoExtractor.extractObjFile(),
+                ObjInfoExtractor.extractCube()
         )
         drawImage(Matrix4x4.DIAGONAL)
     }

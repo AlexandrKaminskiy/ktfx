@@ -9,9 +9,12 @@ import javax.imageio.ImageIO
 
 object ObjInfoExtractor {
 
+    val model: String = "Shovel Knight"
+    val cubeMap: String = "Cube"
+
     @JvmStatic
     fun extractObjFile(): Obj {
-        val inputStream = FileInputStream("pekka/source/pekka.obj")
+        val inputStream = FileInputStream("${model}/Model.obj")
         val obj = ObjUtils.convertToRenderable(
             ObjReader.read(inputStream)
         )
@@ -20,17 +23,30 @@ object ObjInfoExtractor {
 
     @JvmStatic
     fun extractTextures(): BufferedImage {
-        return ImageIO.read(File("pekka/textures/color.png"))
+        return ImageIO.read(File("${model}/Albedo Map.png"))
     }
 
     @JvmStatic
     fun extractNormals(): BufferedImage {
-        return ImageIO.read(File("pekka/textures/normal.png"))
+        return ImageIO.read(File("${model}/Normal Map.png"))
     }
 
     @JvmStatic
     fun extractSpecular(): BufferedImage {
-        return ImageIO.read(File("pekka/textures/metal.png"))
+        return ImageIO.read(File("${model}/Metalness Map.png"))
     }
 
+    @JvmStatic
+    fun extractCube(): Obj {
+        val inputStream = FileInputStream("${cubeMap}/Model.obj")
+        val obj = ObjUtils.convertToRenderable(
+                ObjReader.read(inputStream)
+        )
+        return obj
+    }
+
+    @JvmStatic
+    fun extractCubeMap(): BufferedImage {
+        return ImageIO.read(File("StandardCubeMap.png"))
+    }
 }

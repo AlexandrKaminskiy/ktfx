@@ -14,7 +14,8 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
     val lighting = Lighting()
     private val textureHolder: TextureHolder = TextureHolder()
     val eye = Vector3D(0.0, 0.0, 10.0)
-    fun triangle(polygon: Polygon, light: Vector3D, transformation: Matrix4x4) {
+
+    fun triangle(polygon: Polygon, light: Vector3D, transformation: Matrix4x4, cubeVectors: MutableList<Vector4D>, isCube: Boolean) {
 
         val points = ArrayList(polygon.vectors)
         Collections.sort(points, Comparator.comparingDouble { v1 -> v1.y })
@@ -66,20 +67,20 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
                 val w = w00 + dwdx * incX + dwdy * incY
 
                 if (u >= 0 && v >= 0 && w >= 0) {
-                    val z = a.z * u + v * b.z + w * c.z
+                    val z = if (isCube) 100000.0 else a.z * u + v * b.z + w * c.z
 
                     val intVec = (aStart * u + bStart * v + cStart * w)
 
                     val intColX = min(ta.x * u + tb.x * v + tc.x * w, 1.0)
                     val intColY = min(ta.y * u + tb.y * v + tc.y * w, 1.0)
 
-                    val pixel = textureHolder.getPixel(intColX, intColY)
-                    var normal = textureHolder.getNormal(intColX, intColY)
+                    val pixel = textureHolder.getPixel(intColX, intColY, isCube)
+                    var normal = if (isCube) Vector3D(0.0,0.0,0.0) else textureHolder.getNormal(intColX, intColY)
                     normal = Vector3D(Vector4D(normal) x transformation).normalize()
 
-                    val spec = textureHolder.getSpecular(intColX, intColY)
+                    val spec = if (isCube) Color(0,0,0) else textureHolder.getSpecular(intColX, intColY)
 
-                    val color = lighting.calculateLight(light, normal, eye, intVec, pixel, spec)
+                    val color = lighting.calculateLight(light, normal, eye, intVec, pixel, spec, isCube)
                     zBuffer.setColor(j, i, Point(z, color))
                 }
                 incX++

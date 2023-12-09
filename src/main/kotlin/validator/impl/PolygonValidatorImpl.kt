@@ -12,6 +12,7 @@ class PolygonValidatorImpl : PolygonValidator {
         val v2 = polygon.vectors[1]
         val v3 = polygon.vectors[2]
 
+
         return v1.x > 0 && v1.y > 0 && v1.x < width && v1.y < height &&
                 v2.x > 0 && v2.y > 0 && v2.x < width && v2.y < height &&
                 v3.x > 0 && v3.y > 0 && v3.x < width && v3.y < height
