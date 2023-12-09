@@ -19,10 +19,10 @@ class Lighting {
     val sColor = Color(255, 255, 255)
 
 
-    fun calculateLight(light: Vector3D, norm: Vector3D, eye: Vector3D, shape: Vector3D, color: Color, spec: Double): Int {
+    fun calculateLight(light: Vector3D, norm: Vector3D, eye: Vector3D, shape: Vector3D, color: Color, spec: Color): Int {
         val ambient = color * kAmbient
         val diffuse = color * kDiffuse * (fongCalculation(shape - light, norm))
-        val specular = sColor * spec * theta(light, norm, eye).pow(alpha)
+        val specular = spec * theta(light, norm, eye).pow(alpha)
         return (ambient + diffuse + specular).build()
                 .toIntColor()
     }
