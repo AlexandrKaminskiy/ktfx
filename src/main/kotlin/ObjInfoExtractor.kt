@@ -16,7 +16,7 @@ object ObjInfoExtractor {
     fun extractObjFile(): Obj {
         val inputStream = FileInputStream("${model}/Model.obj")
         val obj = ObjUtils.convertToRenderable(
-            ObjReader.read(inputStream)
+                ObjReader.read(inputStream)
         )
         return obj
     }
@@ -46,7 +46,14 @@ object ObjInfoExtractor {
     }
 
     @JvmStatic
-    fun extractCubeMap(): BufferedImage {
-        return ImageIO.read(File("StandardCubeMap.png"))
+    fun extractCubeMap(): Map<String, BufferedImage> {
+        return mapOf(
+                "nx" to ImageIO.read(File("cubemap/nx.png")),
+                "ny" to ImageIO.read(File("cubemap/ny.png")),
+                "nz" to ImageIO.read(File("cubemap/nz.png")),
+                "px" to ImageIO.read(File("cubemap/px.png")),
+                "py" to ImageIO.read(File("cubemap/py.png")),
+                "pz" to ImageIO.read(File("cubemap/pz.png")),
+                )
     }
 }

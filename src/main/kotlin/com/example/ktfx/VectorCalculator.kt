@@ -123,41 +123,50 @@ class VectorCalculator(
     }
 
     fun calculate(transformation: Matrix4x4) {
-        cubeVectors = cubeVectors.map { transformation x it }.toMutableList()
+//        cubeVectors = cubeVectors.map { transformation x it }.toMutableList()
         val cubeStartVectors = cubeVectors.map { transformation x it }.toMutableList()
         vectors4D = vectors4D.map { transformation x it }.toMutableList()
         light4D = transformation x light4D
         val light = Vector3D(light4D.x, light4D.y, light4D.z)
 
-        customThreadPool.run {
-            cubeFaces.parallelStream()
-                    .map {
-                        Polygon(
-                                arrayListOf(cubeVectors[it.aV], cubeVectors[it.bV], cubeVectors[it.cV]),
-                                arrayListOf(cubeStartVectors[it.aV], cubeStartVectors[it.bV], cubeStartVectors[it.cV]),
-                                arrayListOf(cubeTexes[it.aT], cubeTexes[it.bT], cubeTexes[it.cT]),
-                                0
-                        )
-                    }
-                    .peek { it.vectors = it.vectors.stream().map { v -> v x viewMatrix.provide() }.toList() }
-                    .peek { it.vectors = it.vectors.stream().map { v -> v x projectionMatrix.provide() }.toList() }
-                    .peek { it.vectors = it.vectors.stream().map { v -> v x viewport.provide() }.toList() }
-                    .peek {
-                        it.vectors = it.vectors.stream().map { v ->
-                            Vector4D(
-                                    v.x.coerceIn(0.0, width),
-                                    v.y.coerceIn(0.0, height),
-                                    v.z,
-                                    v.w
-                            )
-                        }.toList()
-                    }
-                    .filter { validator.validateVisibility(it) }
-                    .forEach {
-                        shapesAlgos.triangle(it, light, transformation, cubeStartVectors, true)
-                    }
-        }
-        println("here")
+        var cubePolygons = cubeFaces.parallelStream()
+                .map {
+                    Polygon(
+                            arrayListOf(cubeVectors[it.aV], cubeVectors[it.bV], cubeVectors[it.cV]),
+                            arrayListOf(cubeStartVectors[it.aV], cubeStartVectors[it.bV], cubeStartVectors[it.cV]),
+                            arrayListOf(cubeTexes[it.aT], cubeTexes[it.bT], cubeTexes[it.cT]),
+                            0
+                    )
+                }
+                .toList()
+
+//        cubeFaces.parallelStream()
+//                .map {
+//                    Polygon(
+//                            arrayListOf(cubeVectors[it.aV], cubeVectors[it.bV], cubeVectors[it.cV]),
+//                            arrayListOf(cubeStartVectors[it.aV], cubeStartVectors[it.bV], cubeStartVectors[it.cV]),
+//                            arrayListOf(cubeTexes[it.aT], cubeTexes[it.bT], cubeTexes[it.cT]),
+//                            0
+//                    )
+//                }
+//                .peek { it.vectors = it.vectors.stream().map { v -> v x viewMatrix.provide() }.toList() }
+//                .peek { it.vectors = it.vectors.stream().map { v -> v x projectionMatrix.provide() }.toList() }
+//                .peek { it.vectors = it.vectors.stream().map { v -> v x viewport.provide() }.toList() }
+//                .peek {
+//                    it.vectors = it.vectors.stream().map { v ->
+//                        Vector4D(
+//                                v.x.coerceIn(0.0, width),
+//                                v.y.coerceIn(0.0, height),
+//                                v.z,
+//                                v.w
+//                        )
+//                    }.toList()
+//                }
+//                .filter { validator.validateVisibility(it) }
+//                .forEach {
+//                    shapesAlgos.triangle(it, light, transformation, cubePolygons)
+//                }
+
         customThreadPool.run {
             faces.parallelStream()
                     .map {
@@ -177,9 +186,10 @@ class VectorCalculator(
                     .filter { validator.validateSizeConstraints(it, width, height) }
 
                     .forEach {
-                        shapesAlgos.triangle(it, light, transformation, cubeStartVectors, false)
+                        shapesAlgos.triangle(it, light, transformation, cubePolygons)
                     }
         }
+
 
     }
 

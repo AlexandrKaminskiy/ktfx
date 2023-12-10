@@ -3,6 +3,7 @@ package graphics
 import TextureHolder
 import ZBuffer
 import linear.Matrix4x4
+import linear.Vector2D
 import linear.Vector3D
 import linear.Vector4D
 import java.util.*
@@ -15,7 +16,7 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
     private val textureHolder: TextureHolder = TextureHolder()
     val eye = Vector3D(0.0, 0.0, 10.0)
 
-    fun triangle(polygon: Polygon, light: Vector3D, transformation: Matrix4x4, cubeVectors: MutableList<Vector4D>, isCube: Boolean) {
+    fun triangle(polygon: Polygon, light: Vector3D, transformation: Matrix4x4, cubePolygons: MutableList<Polygon>) {
 
         val points = ArrayList(polygon.vectors)
         Collections.sort(points, Comparator.comparingDouble { v1 -> v1.y })
@@ -67,20 +68,22 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
                 val w = w00 + dwdx * incX + dwdy * incY
 
                 if (u >= 0 && v >= 0 && w >= 0) {
-                    val z = if (isCube) 100000.0 else a.z * u + v * b.z + w * c.z
+                    val z = a.z * u + v * b.z + w * c.z
 
                     val intVec = (aStart * u + bStart * v + cStart * w)
 
                     val intColX = min(ta.x * u + tb.x * v + tc.x * w, 1.0)
                     val intColY = min(ta.y * u + tb.y * v + tc.y * w, 1.0)
 
-                    val pixel = textureHolder.getPixel(intColX, intColY, isCube)
-                    var normal = if (isCube) Vector3D(0.0,0.0,0.0) else textureHolder.getNormal(intColX, intColY)
+                    val pixel = textureHolder.getPixel(intColX, intColY)
+                    var normal = textureHolder.getNormal(intColX, intColY)
                     normal = Vector3D(Vector4D(normal) x transformation).normalize()
+                    val reflected = reflected(eye, normal).normalize()
+                    val cubeMapPoint = findPointOnCubeMap(intVec, reflected, cubePolygons)
 
-                    val spec = if (isCube) Color(0,0,0) else textureHolder.getSpecular(intColX, intColY)
+                    val spec = textureHolder.getCubeMapTexture(cubeMapPoint)
 
-                    val color = lighting.calculateLight(light, normal, eye, intVec, pixel, spec, isCube)
+                    val color = lighting.calculateLight(light, normal, eye, intVec, pixel, spec)
                     zBuffer.setColor(j, i, Point(z, color))
                 }
                 incX++
@@ -89,14 +92,22 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
         }
     }
 
+    fun reflected(l: Vector3D, n: Vector3D) = l - n.normalize() * (l * n.normalize()) * 2.0
 
-    fun zeroCheck(v1: Double, v2: Double) = abs(v1 - v2) < 0.00000001
-
-    /**
-     * Retrieving of X value by Y value
-     */
-    fun interpolate(targetY: Double, x1: Double, y1: Double, x2: Double, y2: Double) =
-            if (zeroCheck(y1, y2)) x1 else (x1 - x2) / (y1 - y2) * (targetY - y1) + x1
+    fun findPointOnCubeMap(shape: Vector3D, r: Vector3D, cubePolygons: MutableList<Polygon>): Vector3D {
+//        cubePolygons.stream().forEach{ println(it.vectors)}
+//        println()
+//        println()
+        val delta = shape + r
+//        println(shape)
+//        println(delta)
+        return cubePolygons.stream()
+                .map { it.intersection(shape, delta) }
+                .filter { it != Vector3D.NULL_VECTOR }
+                .findFirst()
+//                .get()
+                .orElseGet { Vector3D(0.0, 0.0, 0.0) }
+    }
 
 
 }
