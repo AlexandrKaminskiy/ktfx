@@ -15,13 +15,13 @@ class Lighting {
 
 
     val kSpecular: Double = 1.0
-    val alpha: Double = 0.05
+    val alpha: Double = 10.0
     val sColor = Color(255, 255, 255)
 
 
     fun calculateLight(light: Vector3D, norm: Vector3D, eye: Vector3D, shape: Vector3D, color: Color, spec: Color): Int {
-            val ambient = color * kAmbient
-            val diffuse = color * kDiffuse * (fongCalculation(shape - light, norm))
+            val ambient = spec * kAmbient
+            val diffuse = spec * kDiffuse * (fongCalculation(shape - light, norm))
             val specular = spec * theta(light, norm, eye).pow(alpha)
             return (ambient + diffuse + specular).build()
                     .toIntColor()
@@ -32,6 +32,7 @@ class Lighting {
 //        return (ambient).build()
 //                .toIntColor()
     }
+    fun calculateCubeMapColor(color: Color) = (color * 1.0).build().toIntColor()
 
     fun fongCalculation(light: Vector3D, norm: Vector3D): Double {
 

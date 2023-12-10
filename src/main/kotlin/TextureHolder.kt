@@ -11,6 +11,9 @@ class TextureHolder {
     var normalTextures: BufferedImage
     var specularTextures: BufferedImage
     var cubeTextures: Map<String, BufferedImage>
+    var terrainTextures: BufferedImage
+    var terrainWidth: Int
+    var terrainHeight: Int
     var width: Int
     var height: Int
     var cubeWidth: Int
@@ -21,8 +24,11 @@ class TextureHolder {
         cubeTextures = ObjInfoExtractor.extractCubeMap()
         normalTextures = ObjInfoExtractor.extractNormals()
         specularTextures = ObjInfoExtractor.extractSpecular()
+        terrainTextures = ObjInfoExtractor.extractTerrain()
         width = albedoTextures.width
         height = albedoTextures.height
+        terrainWidth = terrainTextures.width
+        terrainHeight = terrainTextures.height
         cubeWidth = cubeTextures["nx"]!!.width
         cubeHeight =  cubeTextures["nx"]!!.height
     }
@@ -55,6 +61,15 @@ class TextureHolder {
         return Vector3D(color.r.toDouble() / 255.0 * 2.0 - 1.0, color.g.toDouble() / 255.0 * 2.0 - 1.0, color.b.toDouble() / 255.0 * 2.0 - 1.0)
     }
 
+    fun getTerrain(u: Double, v: Double): Color {
+        var decX = 0
+        if (abs(u - 1.0) < 0.00001) decX = 1
+        var decY = 0
+        if (abs(v) < 0.00001) decY = 1
+        val rgb = terrainTextures.getRGB((terrainWidth * u).toInt() - decX, terrainHeight - (terrainHeight * v).toInt() - decY)
+        val color = Color(rgb)
+        return color
+    }
     fun getSpecular(u: Double, v: Double): Color {
         var decX = 0
         if (abs(u - 1.0) < 0.00001) decX = 1
@@ -66,11 +81,6 @@ class TextureHolder {
     }
     fun getCubeMapTexture(p: Vector3D): Color {
 
-//        println(p.x)
-//        println(p.y)
-//        println(p.z)
-
-//        println()
         val inc = 100.0
         val imageName = getImageName(p)
         val coords = when (imageName) {

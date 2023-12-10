@@ -140,32 +140,32 @@ class VectorCalculator(
                 }
                 .toList()
 
-//        cubeFaces.parallelStream()
-//                .map {
-//                    Polygon(
-//                            arrayListOf(cubeVectors[it.aV], cubeVectors[it.bV], cubeVectors[it.cV]),
-//                            arrayListOf(cubeStartVectors[it.aV], cubeStartVectors[it.bV], cubeStartVectors[it.cV]),
-//                            arrayListOf(cubeTexes[it.aT], cubeTexes[it.bT], cubeTexes[it.cT]),
-//                            0
-//                    )
-//                }
-//                .peek { it.vectors = it.vectors.stream().map { v -> v x viewMatrix.provide() }.toList() }
-//                .peek { it.vectors = it.vectors.stream().map { v -> v x projectionMatrix.provide() }.toList() }
-//                .peek { it.vectors = it.vectors.stream().map { v -> v x viewport.provide() }.toList() }
-//                .peek {
-//                    it.vectors = it.vectors.stream().map { v ->
-//                        Vector4D(
-//                                v.x.coerceIn(0.0, width),
-//                                v.y.coerceIn(0.0, height),
-//                                v.z,
-//                                v.w
-//                        )
-//                    }.toList()
-//                }
-//                .filter { validator.validateVisibility(it) }
-//                .forEach {
-//                    shapesAlgos.triangle(it, light, transformation, cubePolygons)
-//                }
+        cubeFaces.parallelStream()
+                .map {
+                    Polygon(
+                            arrayListOf(cubeVectors[it.aV], cubeVectors[it.bV], cubeVectors[it.cV]),
+                            arrayListOf(cubeStartVectors[it.aV], cubeStartVectors[it.bV], cubeStartVectors[it.cV]),
+                            arrayListOf(cubeTexes[it.aT], cubeTexes[it.bT], cubeTexes[it.cT]),
+                            0
+                    )
+                }
+                .peek { it.vectors = it.vectors.stream().map { v -> v x viewMatrix.provide() }.toList() }
+                .peek { it.vectors = it.vectors.stream().map { v -> v x projectionMatrix.provide() }.toList() }
+                .peek { it.vectors = it.vectors.stream().map { v -> v x viewport.provide() }.toList() }
+                .peek {
+                    it.vectors = it.vectors.stream().map { v ->
+                        Vector4D(
+                                v.x.coerceIn(0.0, width),
+                                v.y.coerceIn(0.0, height),
+                                v.z,
+                                v.w
+                        )
+                    }.toList()
+                }
+                .filter { validator.validateVisibility(it) }
+                .forEach {
+                    shapesAlgos.rasterizeCubeMap(it)
+                }
 
         customThreadPool.run {
             faces.parallelStream()

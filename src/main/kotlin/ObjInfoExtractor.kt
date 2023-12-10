@@ -11,6 +11,7 @@ object ObjInfoExtractor {
 
     val model: String = "Shovel Knight"
     val cubeMap: String = "Cube"
+    val terrain: String = "StandardCubeMap"
 
     @JvmStatic
     fun extractObjFile(): Obj {
@@ -55,5 +56,10 @@ object ObjInfoExtractor {
                 "py" to ImageIO.read(File("cubemap/py.png")),
                 "pz" to ImageIO.read(File("cubemap/pz.png")),
                 )
+    }
+
+    @JvmStatic
+    fun extractTerrain(): BufferedImage {
+        return ImageIO.read(File("${terrain}.png"))
     }
 }
