@@ -63,11 +63,17 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
 
         for ((incY, i) in (yMin..yMax).withIndex()) {
             for (j in xMin..xMax) {
-                val u = u00 + dudx * incX + dudy * incY
-                val v = v00 + dvdx * incX + dvdy * incY
-                val w = w00 + dwdx * incX + dwdy * incY
+                var u = u00 + dudx * incX + dudy * incY
+                var v = v00 + dvdx * incX + dvdy * incY
+                var w = w00 + dwdx * incX + dwdy * incY
 
                 if (u >= 0 && v >= 0 && w >= 0) {
+
+                    val bar = correctInterpolation(u, v, w, polygon.vectors[0].w, polygon.vectors[1].w, polygon.vectors[2].w)
+                    u = bar.x
+                    v = bar.y
+                    w = bar.z
+
                     val z = a.z * u + v * b.z + w * c.z
 
                     val intVec = (aStart * u + bStart * v + cStart * w)
@@ -92,6 +98,9 @@ class ShapesAlgos(val zBuffer: ZBuffer) {
         }
     }
 
+    fun correctInterpolation(u: Double, v: Double, w: Double, w0: Double, w1: Double, w2: Double): Vector3D {
+        return Vector3D(u / w0, v / w1, w / w2) * (1 / (u / w0 + v / w1 + w / w2))
+    }
     fun rasterizeCubeMap(polygon: Polygon) {
         val points = ArrayList(polygon.vectors)
         Collections.sort(points, Comparator.comparingDouble { v1 -> v1.y })

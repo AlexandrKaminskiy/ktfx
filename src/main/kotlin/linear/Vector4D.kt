@@ -18,4 +18,5 @@ data class Vector4D(val x: Double, val y: Double, val z: Double, val w: Double) 
 
     constructor(v3: Vector3D) : this(v3.x, v3.y, v3.z, 0.0)
 
+    fun divideWithoutW(n: Double) = Vector4D(x / n, y / n, z/ n, w)
 }

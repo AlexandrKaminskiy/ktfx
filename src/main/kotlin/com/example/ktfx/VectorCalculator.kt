@@ -129,16 +129,7 @@ class VectorCalculator(
         light4D = transformation x light4D
         val light = Vector3D(light4D.x, light4D.y, light4D.z)
 
-        var cubePolygons = cubeFaces.parallelStream()
-                .map {
-                    Polygon(
-                            arrayListOf(cubeVectors[it.aV], cubeVectors[it.bV], cubeVectors[it.cV]),
-                            arrayListOf(cubeStartVectors[it.aV], cubeStartVectors[it.bV], cubeStartVectors[it.cV]),
-                            arrayListOf(cubeTexes[it.aT], cubeTexes[it.bT], cubeTexes[it.cT]),
-                            0
-                    )
-                }
-                .toList()
+
 
         cubeFaces.parallelStream()
                 .map {
@@ -167,6 +158,17 @@ class VectorCalculator(
                     shapesAlgos.rasterizeCubeMap(it)
                 }
 
+        var cubePolygons = cubeFaces.parallelStream()
+                .map {
+                    Polygon(
+                            arrayListOf(cubeVectors[it.aV], cubeVectors[it.bV], cubeVectors[it.cV]),
+                            arrayListOf(cubeStartVectors[it.aV], cubeStartVectors[it.bV], cubeStartVectors[it.cV]),
+                            arrayListOf(cubeTexes[it.aT], cubeTexes[it.bT], cubeTexes[it.cT]),
+                            0
+                    )
+                }
+                .toList()
+
         customThreadPool.run {
             faces.parallelStream()
                     .map {
@@ -180,7 +182,7 @@ class VectorCalculator(
                     .peek { it.vectors = it.vectors.stream().map { v -> v x viewMatrix.provide() }.toList() }
                     .peek { it.vectors = it.vectors.stream().map { v -> v x projectionMatrix.provide() }.toList() }
                     .peek { it.vectors = it.vectors.stream().map { v -> v x viewport.provide() }.toList() }
-                    .peek { it.vectors = it.vectors.stream().map { v -> v * (1 / v.w) }.toList() }
+                    .peek { it.vectors = it.vectors.stream().map { v -> v.divideWithoutW(v.w) }.toList() }
                     .filter { validator.validateVisibility(it) }
 
                     .filter { validator.validateSizeConstraints(it, width, height) }
